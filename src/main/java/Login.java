@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.sql.*;
 
 public class Login extends JFrame {
 
@@ -86,5 +87,65 @@ public class Login extends JFrame {
         panelConFondo.add(botonSalir, gbc);
 
         setVisible(true);
+
+        botonEnviar.addActionListener(e -> {
+            String usuario = campoUser.getText();
+            String password = new String(campoPassword.getPassword());
+            comprobarUsuario(usuario, password);
+        });
+
     }
+    public void comprobarUsuario(String usuario, String password) {
+        String url = "jdbc:mysql://db-aldeas.c7wsukq6guur.us-east-1.rds.amazonaws.com:3306/Cruce_De_Caminos";
+        String userDB = "admin";
+        String passDB = "Admin.12345678";
+
+        try (Connection conn = ConexionDB.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT Rol FROM Usuarios WHERE Username = ? AND Password_Hash = ?");
+            stmt.setString(1, usuario);
+            stmt.setString(2, password);
+
+            ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    String rol = rs.getString("Rol");
+//                    JOptionPane.showMessageDialog(this, "Login correcto como " + rol);
+
+                    // Redirigir según rol
+                    switch (rol) {
+                        case "alumno":
+                            abrirVentanaAlumno();
+                            break;
+                        case "profesor":
+                            abrirVentanaProfesor();
+                            break;
+                        case "administrador":
+                            abrirVentanaAdministrador();
+                            break;
+                    }
+
+                    dispose();
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
+                }
+            } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void abrirVentanaAdministrador() {
+        JOptionPane.showMessageDialog(this, "Administrador");
+    }
+
+    private void abrirVentanaProfesor() {
+        JOptionPane.showMessageDialog(this, "Profesor");
+
+    }
+
+    private void abrirVentanaAlumno() {
+        JOptionPane.showMessageDialog(this, "Alumno");
+
+    }
+
 }
