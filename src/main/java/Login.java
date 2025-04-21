@@ -16,7 +16,7 @@ public class Login extends JFrame {
         setSize(350, 350);
         setLocationRelativeTo(null);
 
-        // Fondo personalizado
+        // Fondo con imagen
         JPanel panelConFondo = new JPanel() {
             Image fondo = new ImageIcon(getClass().getClassLoader().getResource("fondo.jpg")).getImage();
 
