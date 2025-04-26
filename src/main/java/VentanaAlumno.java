@@ -1,14 +1,19 @@
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.sql.*;
 
 public class VentanaAlumno extends JFrame {
+
+    public int idAlumno;
 
     public VentanaAlumno(String nombreUsuario) {
         setTitle("Panel del Alumno - " + nombreUsuario);
         setMinimumSize(new Dimension(800, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        Color colorMenu = new Color(90, 78, 141);
 
         // Panel principal con fondo
         JPanel fondo = new JPanel() {
@@ -36,30 +41,39 @@ public class VentanaAlumno extends JFrame {
         menuBtn.setFocusPainted(false);
 
         JPopupMenu menu = new JPopupMenu();
-        menu.add(new JMenuItem("Home"));
-        menu.add(new JMenuItem("Realizar test práctica"));
-        menu.add(new JMenuItem("Realizar test examen"));
+        int anchoIconosMenus = 30;
+        menu.add(new JMenuItem("Home", cargarIcono("hogar.png", anchoIconosMenus, anchoIconosMenus)));
+        menu.add(new JMenuItem("Realizar test práctica", cargarIcono("prueba.png", anchoIconosMenus, anchoIconosMenus)));
+        menu.add(new JMenuItem("Realizar test examen", cargarIcono("examen.png", anchoIconosMenus, anchoIconosMenus)));
+        menu.add(new JMenuItem("Consultar porcentaje", cargarIcono("porcentaje.png", anchoIconosMenus, anchoIconosMenus)));
+        menu.addSeparator();
+        menu.add(new JMenuItem("Solicitar cita práctica", cargarIcono("calendario.png", anchoIconosMenus, anchoIconosMenus)));
+        menu.add(new JMenuItem("Consultar maniobras superadas", cargarIcono("formar.png", anchoIconosMenus, anchoIconosMenus)));
+
 
         menuBtn.addActionListener(e -> menu.show(menuBtn, 0, menuBtn.getHeight()));
 
-        JButton userBtn = new JButton(cargarIcono("usuario.png", 50, 50));
-        userBtn.setBackground(barraSuperior.getBackground());
-        userBtn.setBorderPainted(false);
-        userBtn.setFocusPainted(false);
+        JButton userButton = new JButton(cargarIcono("usuario.png", 50, 50));
+        userButton.setBackground(colorMenu);
+        userButton.setBorderPainted(false);
 
-        JPopupMenu userMenu = new JPopupMenu();
-        JMenuItem cerrarSesion = new JMenuItem("Cerrar sesión");
-        cerrarSesion.addActionListener(e -> {
-            dispose();
-            new Login();
+        JPopupMenu menuUsuario = new JPopupMenu();
+        JMenuItem itemCerrarSesion = new JMenuItem("Cerrar sesión", cargarIcono("boton-de-encendido.png", anchoIconosMenus, anchoIconosMenus));
+        itemCerrarSesion.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Seguro que quieres cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                dispose();
+                new Login();
+            }
         });
-        userMenu.add(new JMenuItem("Mensajes"));
-        userMenu.add(cerrarSesion);
+        menuUsuario.add(new JMenuItem("Consultar mensajes", cargarIcono("correo-electronico.png", anchoIconosMenus, anchoIconosMenus)));
+        menuUsuario.add(itemCerrarSesion);
 
-        userBtn.addActionListener(e -> userMenu.show(userBtn, 0, userBtn.getHeight()));
+        userButton.addActionListener(e -> menuUsuario.show(userButton, userButton.getWidth() - 100, userButton.getHeight()));
+
 
         barraSuperior.add(menuBtn, BorderLayout.WEST);
-        barraSuperior.add(userBtn, BorderLayout.EAST);
+        barraSuperior.add(userButton, BorderLayout.EAST);
 
         fondo.add(barraSuperior, BorderLayout.NORTH);
 
@@ -69,9 +83,25 @@ public class VentanaAlumno extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(30, 30, 30, 30);
 
+        //Conuslta para el id de usuario
+        int idAlumno = -1;
+        try (Connection conn = ConexionDB.getConnection()) {
+            String sql = "SELECT ID_Alumno FROM Alumno WHERE Nombre = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, nombreUsuario);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                idAlumno = rs.getInt("ID_Alumno");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al obtener el ID del usuario: " + e.getMessage());
+        }
+
         gbc.gridx = 0;
         JButton b1 = crearBoton("Test práctica", "prueba.png");
-        b1.addActionListener(e -> new TestPractica());
+        int finalIdAlumno = idAlumno;//Cosas del IDE
+        b1.addActionListener(e -> new TestPractica(finalIdAlumno));
         panelCentral.add(b1, gbc);
 
         gbc.gridx = 1;
@@ -149,22 +179,5 @@ public class VentanaAlumno extends JFrame {
             System.err.println("No se encontró el icono: " + nombre);
             return null;
         }
-    }
-
-    // Mock de clases que se llaman
-    class TestPractica extends JFrame {
-        TestPractica() { setTitle("Test Práctica"); setSize(300,200); setVisible(true); }
-    }
-
-    class TestExamen extends JFrame {
-        TestExamen() { setTitle("Test Examen"); setSize(300,200); setVisible(true); }
-    }
-
-    class CitaPractica extends JFrame {
-        CitaPractica() { setTitle("Cita Práctica"); setSize(300,200); setVisible(true); }
-    }
-
-    class Login extends JFrame {
-        Login() { setTitle("Login"); setSize(300,200); setVisible(true); }
     }
 }

@@ -96,9 +96,6 @@ public class Login extends JFrame {
 
     }
     public void comprobarUsuario(String usuario, String password) {
-        String url = "jdbc:mysql://db-aldeas.c7wsukq6guur.us-east-1.rds.amazonaws.com:3306/Cruce_De_Caminos";
-        String userDB = "admin";
-        String passDB = "Admin.12345678";
 
         try (Connection conn = ConexionDB.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("SELECT Rol FROM Usuarios WHERE Username = ? AND Password_Hash = ?");

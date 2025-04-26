@@ -91,26 +91,44 @@ INSERT INTO Alumno (ID_Alumno, DNI, Nombre, Apellido, Tipo) VALUES
 (32, '40000010C', 'Practico10', 'Apellido', 'practico');
 
 -- === PREGUNTAS TEST ===
-INSERT INTO PreguntasTest (Pregunta, Correcta, Opcion1, Opcion2, Opcion3)
-SELECT CONCAT('Pregunta número ', n),
-       'Correcta',
-       'Opción A',
-       'Opción B',
-       'Opción C'
-FROM (SELECT @n := @n + 1 AS n FROM 
-      (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
-       UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t1,
-      (SELECT 0 UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 
-       UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) t2,
-      (SELECT @n := 0) init) x
-LIMIT 100;
+INSERT INTO PreguntasTest (ID_PreguntaTest, Pregunta, Correcta, Opcion1, Opcion2, Opcion3) VALUES
+(1, '¿Cuál es la velocidad máxima permitida en una autopista para un turismo?', '120 km/h', '100 km/h', '130 km/h', '110 km/h'),
+(2, '¿Qué debe hacer si ve una señal de STOP?', 'Detenerse completamente', 'Reducir la velocidad', 'Tocar el claxon', 'Aumentar la velocidad'),
+(3, '¿Qué indica una luz verde en un semáforo?', 'Puede continuar', 'Debe detenerse', 'Precaución extrema', 'Solo para peatones'),
+(4, '¿Cuál es la tasa máxima de alcoholemia permitida para conductores profesionales?', '0,3 g/l en sangre', '0,5 g/l en sangre', '0,0 g/l en sangre', '0,8 g/l en sangre'),
+(5, '¿Está permitido adelantar en un paso de peatones?', 'No', 'Sí, si no hay peatones', 'Sí, siempre', 'Depende del tipo de paso'),
+(6, '¿Qué color tiene la señal de prohibido estacionar?', 'Azul con borde rojo', 'Rojo completo', 'Amarillo', 'Blanco'),
+(7, '¿Cuál es la distancia mínima de seguridad al adelantar a un ciclista?', '1,5 metros', '1 metro', '2 metros', '50 centímetros'),
+(8, '¿Qué documento es obligatorio llevar siempre en el vehículo?', 'Permiso de circulación', 'Factura de compra', 'Libro de revisiones', 'Manual del coche'),
+(9, '¿Qué significa una señal triangular con borde rojo?', 'Peligro', 'Prohibición', 'Obligación', 'Información'),
+(10, '¿Qué sistema evita que las ruedas se bloqueen al frenar?', 'ABS', 'ESP', 'Airbag', 'Control de crucero'),
+(11, '¿Cuándo debe usar las luces de cruce?', 'Cuando haya poca visibilidad', 'Solo de noche', 'Solo en autopista', 'Nunca en ciudad'),
+(12, '¿Qué indica una señal de círculo azul con una flecha blanca hacia arriba?', 'Obligación de seguir recto', 'Prohibición de seguir recto', 'Zona peligrosa', 'Prohibido peatones'),
+(13, '¿Puede usar el teléfono móvil mientras conduce?', 'No, salvo con manos libres', 'Sí, si es urgente', 'Sí, en vías urbanas', 'Depende del tráfico'),
+(14, '¿Qué hacer si el vehículo patina en una curva?', 'Girar en la dirección de la curva', 'Girar en sentido contrario', 'Frenar bruscamente', 'Acelerar'),
+(15, '¿Cuándo se considera que un neumático está en mal estado?', 'Cuando el dibujo tiene menos de 1,6 mm', 'Cuando supera los 3 años', 'Cuando ha sido pinchado una vez', 'Cuando es de otra marca'),
+(16, '¿Cuál es la maniobra más peligrosa?', 'Adelantar', 'Girar a la izquierda', 'Circular marcha atrás', 'Parar en doble fila'),
+(17, '¿Qué debe hacer si sufre un accidente sin heridos?', 'Retirar los vehículos si es posible', 'Dejar el coche en la calzada', 'Abandonar el lugar', 'Esperar dentro del coche'),
+(18, '¿Cuál es el orden correcto para pasar en un cruce sin señalizar?', 'El de la derecha pasa primero', 'El de la izquierda pasa primero', 'El coche más grande pasa primero', 'El coche rojo pasa primero'),
+(19, '¿Qué significa una línea continua en el centro de la calzada?', 'Prohibido adelantar', 'Carril especial', 'Carril de emergencia', 'Adelantamiento permitido'),
+(20, '¿Qué debe hacer si ve un autobús escolar parado con luces intermitentes?', 'Detenerse', 'Acelerar para adelantar', 'Tocar el claxon', 'Ignorarlo'),
+(21, '¿En qué situaciones debe usar el triángulo de emergencia?', 'En averías o accidentes', 'Siempre que llueva', 'De noche', 'Al aparcar en pendiente'),
+(22, '¿Qué significa una luz amarilla intermitente en el semáforo?', 'Precaución', 'Detención obligatoria', 'Prohibición', 'Paso libre solo para peatones'),
+(23, '¿Qué es el aquaplaning?', 'Pérdida de control por agua', 'Frenado en seco', 'Conducción sobre hielo', 'Fallo de frenos'),
+(24, '¿Qué significa una señal azul con una bicicleta blanca?', 'Carril bici', 'Prohibido bicis', 'Precaución bicicletas', 'Zona de carga'),
+(25, '¿Qué significa una señal de círculo rojo con un coche y una moto?', 'Prohibido el paso a vehículos de motor', 'Solo acceso a motos', 'Carril especial', 'Zona escolar'),
+(26, '¿Qué indica una marca vial de rombos blancos en la calzada?', 'Carril reservado', 'Obligación de girar', 'Obras', 'Zona de carga y descarga'),
+(27, '¿Qué debe hacer si un peatón cruza indebidamente?', 'Reducir la velocidad o detenerse', 'Acelerar para asustarlo', 'Tocar el claxon', 'No hacer nada'),
+(28, '¿Qué medida de seguridad es obligatoria para los menores de 135 cm?', 'Sistema de retención infantil', 'Cinturón de seguridad normal', 'Silla trasera', 'Ninguna medida especial'),
+(29, '¿Qué significan las luces de emergencia encendidas?', 'Avisa de peligro', 'Autorización para circular rápido', 'Indica coche de autoescuela', 'Señala que puede girar'),
+(30, '¿Qué significa una señal de prohibido adelantar con un coche negro y otro rojo?', 'Prohibido adelantar a vehículos de motor', 'Obligación de adelantar', 'Prohibido detenerse', 'Prioridad en curvas');
 
 -- === FALLOS DE ALUMNOS TEÓRICOS (10 cada uno) ===
-INSERT INTO Fallos (ID_Pregunta, ID_Alumno, Fecha)
-SELECT (a.ID_Alumno * 10 + b.n) % 100 + 1, a.ID_Alumno, CURDATE()
-FROM (SELECT ID_Alumno FROM Alumno WHERE Tipo = 'teorico') a,
-     (SELECT 1 AS n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-      UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10) b;
+INSERT INTO Fallos (ID_Pregunta, ID_Alumno, Fecha) VALUES
+(2, 1, NOW()),
+(5, 1, NOW()),
+(8, 1, NOW());
+
 
 -- === RESULTADOS TEÓRICOS ===
 INSERT INTO ResultadosTeoricos (ID_Alumno, Total_Test, Total_Suspensos, Porcentaje)
