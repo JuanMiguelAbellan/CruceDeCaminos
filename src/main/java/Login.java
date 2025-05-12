@@ -55,7 +55,7 @@ public class Login extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         panelConFondo.add(icono, gbc);
 
-        // Usuario
+        // Label Usuario
         gbc.gridwidth = 1;
         gbc.gridy++;
         gbc.gridx = 0;
@@ -66,7 +66,7 @@ public class Login extends JFrame {
         campoUser = new JTextField();
         panelConFondo.add(campoUser, gbc);
 
-        // Contraseña
+        // Label Contraseña
         gbc.gridy++;
         gbc.gridx = 0;
         password = new JLabel("Contraseña:");
@@ -98,7 +98,7 @@ public class Login extends JFrame {
     public void comprobarUsuario(String usuario, String password) {
 
         try (Connection conn = ConexionDB.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT Rol FROM Usuarios WHERE Username = ? AND Password_Hash = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Usuarios WHERE Username = ? AND Password_Hash = ?");
             stmt.setString(1, usuario);
             stmt.setString(2, password);
 
@@ -106,12 +106,12 @@ public class Login extends JFrame {
 
                 if (rs.next()) {
                     String rol = rs.getString("Rol");
-//                    JOptionPane.showMessageDialog(this, "Login correcto como " + rol);
+                    int idUsuario = rs.getInt("ID_Usuario");
 
                     // Redirigir según rol
                     switch (rol) {
                         case "alumno":
-                            abrirVentanaAlumno();
+                            abrirVentanaAlumno(idUsuario);
                             break;
                         case "profesor":
                             abrirVentanaProfesor();
@@ -140,8 +140,8 @@ public class Login extends JFrame {
 
     }
 
-    private void abrirVentanaAlumno() {
-        JOptionPane.showMessageDialog(this, "Alumno");
+    private void abrirVentanaAlumno(int idUsuario) {
+        VentanaAlumno ventana=new VentanaAlumno(idUsuario);
 
     }
 

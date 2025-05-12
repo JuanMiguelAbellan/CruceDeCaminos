@@ -1,3 +1,5 @@
+drop database if exists Cruce_De_Caminos;
+create database Cruce_De_Caminos;
 use Cruce_De_Caminos;
 
 CREATE TABLE Usuarios (
@@ -68,10 +70,10 @@ CREATE TABLE ResultadosPracticos (
 );
 
 CREATE TABLE Fallos (
+	ID_Fallo int primary key auto_increment,
     ID_Pregunta INT,
     ID_Alumno INT,
     Fecha DATE,
-    PRIMARY KEY (ID_Pregunta, ID_Alumno),
     FOREIGN KEY (ID_Pregunta) REFERENCES PreguntasTest(ID_PreguntaTest),
     FOREIGN KEY (ID_Alumno) REFERENCES Alumno(ID_Alumno)
 );

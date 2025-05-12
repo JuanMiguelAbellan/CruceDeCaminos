@@ -4,18 +4,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import javax.swing.Timer;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TestExamen extends JFrame {
+public class TestFallos extends JFrame {
     private final JFrame ventanaAnterior;
+
+
 
     private final ArrayList<Pregunta> preguntas = new ArrayList<>();
     private int preguntaActual = 0;
 
     private final JLabel lblEnunciado = new JLabel("", SwingConstants.CENTER);
-    private final JLabel lblTiempo = new JLabel("Tiempo: 30:00", SwingConstants.RIGHT);
     private final JRadioButton[] opciones = new JRadioButton[4];
     private final ButtonGroup grupoOpciones = new ButtonGroup();
     private final JPanel panelOpciones = new JPanel(new GridLayout(4, 1, 10, 10));
@@ -23,17 +26,9 @@ public class TestExamen extends JFrame {
     private final JButton anterior = new JButton("Anterior");
     private final JButton siguiente = new JButton("Siguiente");
     private final JButton corregir = new JButton("Corregir");
-    private final JButton empezar = new JButton("Empezar");
 
-    private Timer temporizador;
-    private int segundosRestantes = 30 * 60; // 30 minutos
-
-    private final int idAlumno; // guardamos ID alumno
-
-    public TestExamen(JFrame ventanaAnterior, int idAlumno) {
+    public TestFallos(JFrame ventanaAnterior, int idAlumno) {
         this.ventanaAnterior = ventanaAnterior;
-        this.idAlumno = idAlumno;
-
         setTitle("Test Práctica");
         setMinimumSize(new Dimension(800, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -43,8 +38,6 @@ public class TestExamen extends JFrame {
             public void windowClosed(WindowEvent e) {
                 if (ventanaAnterior != null) {
                     ventanaAnterior.setVisible(true);
-
-
                 }
             }
         });
@@ -54,16 +47,10 @@ public class TestExamen extends JFrame {
         cargarPreguntasDesdeBD();
 
         lblEnunciado.setFont(new Font("Arial", Font.BOLD, 20));
-        lblEnunciado.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
+        lblEnunciado.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        add(lblEnunciado, BorderLayout.NORTH);
 
-        lblTiempo.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTiempo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20));
-
-        JPanel panelSuperior = new JPanel(new BorderLayout());
-        panelSuperior.add(lblEnunciado, BorderLayout.CENTER);
-        panelSuperior.add(lblTiempo, BorderLayout.EAST);
-        add(panelSuperior, BorderLayout.NORTH);
-
+        // Centramos opciones usando un panel de apoyo
         JPanel panelCentro = new JPanel(new GridBagLayout());
         panelCentro.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
         for (int i = 0; i < 4; i++) {
@@ -76,32 +63,12 @@ public class TestExamen extends JFrame {
         add(panelCentro, BorderLayout.CENTER);
 
         JPanel panelNavegacion = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        empezar.setPreferredSize(new Dimension(120, 40));
         anterior.setPreferredSize(new Dimension(120, 40));
         siguiente.setPreferredSize(new Dimension(120, 40));
         corregir.setPreferredSize(new Dimension(120, 40));
-
-        anterior.setEnabled(false);
-        siguiente.setEnabled(false);
-        corregir.setEnabled(false);
-
         anterior.addActionListener(e -> mostrarPregunta(preguntaActual - 1));
         siguiente.addActionListener(e -> mostrarPregunta(preguntaActual + 1));
-        corregir.addActionListener(e -> {
-            if (temporizador != null) temporizador.stop();
-            corregirTest(idAlumno);
-        });
-
-        empezar.addActionListener(e -> {
-            mostrarPregunta(0);
-            iniciarTemporizador();
-            empezar.setEnabled(false);
-            anterior.setEnabled(true);
-            siguiente.setEnabled(true);
-            corregir.setEnabled(true);
-        });
-
-        panelNavegacion.add(empezar);
+        corregir.addActionListener(e -> corregirTest(idAlumno));
         panelNavegacion.add(anterior);
         panelNavegacion.add(siguiente);
         panelNavegacion.add(corregir);
@@ -120,12 +87,19 @@ public class TestExamen extends JFrame {
 
         add(panelBotones, BorderLayout.SOUTH);
 
+        if (!preguntas.isEmpty()) {
+            mostrarPregunta(0);
+        }
+
         setVisible(true);
     }
 
     private void mostrarPregunta(int indice) {
         if (indice >= 0 && indice < preguntas.size()) {
+
+            // Antes de cambiar, guardamos la respuesta actual
             guardarRespuestaSeleccionada();
+
             preguntaActual = indice;
             Pregunta p = preguntas.get(preguntaActual);
             lblEnunciado.setText("Pregunta " + (preguntaActual + 1) + ": " + p.enunciado);
@@ -206,12 +180,13 @@ public class TestExamen extends JFrame {
     }
 
     private void corregirTest(int idAlumno) {
-        guardarRespuestaSeleccionada();
+        guardarRespuestaSeleccionada(); // guardar la última
 
         Map<Integer, String> mapaCorrectas = new HashMap<>();
         Map<Integer, String> mapaUsuario = new HashMap<>();
 
         try {
+            // Leer respuestas correctas
             try (BufferedReader br = new BufferedReader(new FileReader(".respuestas_correctas.txt"))) {
                 String linea;
                 while ((linea = br.readLine()) != null) {
@@ -220,6 +195,7 @@ public class TestExamen extends JFrame {
                 }
             }
 
+            // Leer respuestas del usuario
             try (BufferedReader br = new BufferedReader(new FileReader(".respuestas_usuario.txt"))) {
                 String linea;
                 while ((linea = br.readLine()) != null) {
@@ -261,28 +237,14 @@ public class TestExamen extends JFrame {
             JOptionPane.showMessageDialog(this, "Error al corregir: " + e.getMessage());
         }
 
+        // Limpieza de archivos después de corregir (opcional)
         new File(".respuestas_correctas.txt").delete();
         new File(".respuestas_usuario.txt").delete();
 
+        // Cerrar ventana del test
         dispose();
     }
 
-
-    private void iniciarTemporizador() {
-        temporizador = new Timer(1000, e -> {
-            segundosRestantes--;
-            int minutos = segundosRestantes / 60;
-            int segundos = segundosRestantes % 60;
-            lblTiempo.setText(String.format("Tiempo: %02d:%02d", minutos, segundos));
-
-            if (segundosRestantes <= 0) {
-                temporizador.stop();
-                JOptionPane.showMessageDialog(this, "Tiempo agotado. Se va a corregir el test automáticamente.");
-                corregirTest(idAlumno);
-            }
-        });
-        temporizador.start();
-    }
 
 
 }

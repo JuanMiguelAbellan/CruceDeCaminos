@@ -1,13 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestPractica extends JFrame {
+    private final JFrame ventanaAnterior;
 
-    private final ArrayList<PreguntaPractica> preguntas = new ArrayList<>();
+
+
+    private final ArrayList<Pregunta> preguntas = new ArrayList<>();
     private int preguntaActual = 0;
 
     private final JLabel lblEnunciado = new JLabel("", SwingConstants.CENTER);
@@ -15,15 +23,27 @@ public class TestPractica extends JFrame {
     private final ButtonGroup grupoOpciones = new ButtonGroup();
     private final JPanel panelOpciones = new JPanel(new GridLayout(4, 1, 10, 10));
 
+    private final JButton volver = new JButton("Volver");
     private final JButton anterior = new JButton("Anterior");
     private final JButton siguiente = new JButton("Siguiente");
     private final JButton corregir = new JButton("Corregir");
 
-    public TestPractica(int idAlumno) {
+    public TestPractica(JFrame ventanaAnterior, int idAlumno) {
+        this.ventanaAnterior = ventanaAnterior;
         setTitle("Test Práctica");
         setMinimumSize(new Dimension(800, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //Para que al cerrar vueva a ventana alumno
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (ventanaAnterior != null) {
+                    ventanaAnterior.setVisible(true);
+                }
+            }
+        });
+
         setLayout(new BorderLayout());
 
         cargarPreguntasDesdeBD();
@@ -78,8 +98,12 @@ public class TestPractica extends JFrame {
 
     private void mostrarPregunta(int indice) {
         if (indice >= 0 && indice < preguntas.size()) {
+
+            // Antes de cambiar, guardamos la respuesta actual
+            guardarRespuestaSeleccionada();
+
             preguntaActual = indice;
-            PreguntaPractica p = preguntas.get(preguntaActual);
+            Pregunta p = preguntas.get(preguntaActual);
             lblEnunciado.setText("Pregunta " + (preguntaActual + 1) + ": " + p.enunciado);
 
             List<String> opcionesMezcladas = new ArrayList<>();
@@ -94,6 +118,40 @@ public class TestPractica extends JFrame {
             }
 
             grupoOpciones.clearSelection();
+
+            if (p.respuestaSeleccionada != null) {
+                for (JRadioButton opcion : opciones) {
+                    if (opcion.getText().equals(p.respuestaSeleccionada)) {
+                        opcion.setSelected(true);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void guardarRespuestaSeleccionada() {
+        if (preguntaActual >= 0 && preguntaActual < preguntas.size()) {
+            Pregunta pregunta = preguntas.get(preguntaActual);
+            String seleccion = null;
+
+            for (JRadioButton opcion : opciones) {
+                if (opcion.isSelected()) {
+                    seleccion = opcion.getText();
+                    break;
+                }
+            }
+
+            pregunta.respuestaSeleccionada = seleccion;
+
+            if (seleccion != null) {
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(".respuestas_usuario.txt", true))) {
+                    bw.write(pregunta.id + ":" + seleccion);
+                    bw.newLine();
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Error al guardar respuesta del usuario");
+                }
+            }
         }
     }
 
@@ -102,59 +160,92 @@ public class TestPractica extends JFrame {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM PreguntasTest ORDER BY RAND() LIMIT 30");
 
-            while (rs.next()) {
-                preguntas.add(new PreguntaPractica(
-                        rs.getInt("ID_PreguntaTest"),
-                        rs.getString("Pregunta"),
-                        rs.getString("Opcion1"),
-                        rs.getString("Opcion2"),
-                        rs.getString("Opcion3"),
-                        rs.getString("Correcta")
-                ));
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(".respuestas_correctas.txt"))) {
+                while (rs.next()) {
+                    Pregunta pregunta = new Pregunta(
+                            rs.getInt("ID_PreguntaTest"),
+                            rs.getString("Pregunta"),
+                            rs.getString("Opcion1"),
+                            rs.getString("Opcion2"),
+                            rs.getString("Opcion3"),
+                            rs.getString("Correcta")
+                    );
+                    preguntas.add(pregunta);
+                    bw.write(pregunta.id + ":" + pregunta.correcta);
+                    bw.newLine();
+                }
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             JOptionPane.showMessageDialog(this, "Error al cargar preguntas: " + e.getMessage());
         }
     }
 
     private void corregirTest(int idAlumno) {
-        int correctas = 0;
+        guardarRespuestaSeleccionada(); // guardar la última
 
-        try (Connection conn = ConexionDB.getConnection()) {
+        Map<Integer, String> mapaCorrectas = new HashMap<>();
+        Map<Integer, String> mapaUsuario = new HashMap<>();
 
-            for (int i = 0; i < preguntas.size(); i++) {
-                PreguntaPractica pregunta = preguntas.get(i);
-
-                String respuestaSeleccionada = null;
-                for (JRadioButton opcion : opciones) {
-                    if (opcion.isSelected()) {
-                        respuestaSeleccionada = opcion.getText();
-                        break;
-                    }
+        try {
+            // Leer respuestas correctas
+            try (BufferedReader br = new BufferedReader(new FileReader(".respuestas_correctas.txt"))) {
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(":", 2);
+                    mapaCorrectas.put(Integer.parseInt(partes[0]), partes[1]);
                 }
+            }
 
-                if (respuestaSeleccionada != null && respuestaSeleccionada.equals(pregunta.correcta)) {
-                    correctas++;
-                } else {
-                    // Insertar fallo en la base de datos
-                    String sql = "INSERT INTO Fallos (ID_Pregunta, ID_Alumno, Fecha) VALUES (?, ?, CURRENT_DATE())";
-                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                        stmt.setInt(1, pregunta.id);
-                        stmt.setInt(2, idAlumno);
-                        stmt.executeUpdate();
+            // Leer respuestas del usuario
+            try (BufferedReader br = new BufferedReader(new FileReader(".respuestas_usuario.txt"))) {
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(":", 2);
+                    mapaUsuario.put(Integer.parseInt(partes[0]), partes[1]);
+                }
+            }
+
+            int correctas = 0;
+            try (Connection conn = ConexionDB.getConnection()) {
+                for (Map.Entry<Integer, String> entrada : mapaCorrectas.entrySet()) {
+                    int id = entrada.getKey();
+                    String correcta = entrada.getValue();
+                    String usuario = mapaUsuario.getOrDefault(id, "");
+
+                    if (usuario.equals(correcta)) {
+                        correctas++;
+                    } else {
+                        try (PreparedStatement stmt = conn.prepareStatement(
+                                "INSERT INTO Fallos (ID_Pregunta, ID_Alumno, Fecha) VALUES (?, ?, CURRENT_DATE())")) {
+                            stmt.setInt(1, id);
+                            stmt.setInt(2, idAlumno);
+                            stmt.executeUpdate();
+                        }
                     }
                 }
             }
 
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al guardar fallos: " + e.getMessage());
+            int enBlanco = mapaCorrectas.size() - mapaUsuario.size();
+
+            JOptionPane.showMessageDialog(this,
+                    "Test finalizado.\nRespuestas correctas: " + correctas + " de " + preguntas.size()
+                            + "\nPreguntas sin responder: " + enBlanco,
+                    "Resultado",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+        } catch (IOException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al corregir: " + e.getMessage());
         }
 
-        JOptionPane.showMessageDialog(this,
-                "Test finalizado.\nRespuestas correctas: " + correctas + " de " + preguntas.size(),
-                "Resultado",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        //opcional
+        new File(".respuestas_correctas.txt").delete();
+        new File(".respuestas_usuario.txt").delete();
+
+        dispose();
     }
+
+
+
 }

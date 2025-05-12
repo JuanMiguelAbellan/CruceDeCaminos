@@ -5,10 +5,8 @@ import java.sql.*;
 
 public class VentanaAlumno extends JFrame {
 
-    public int idAlumno;
-
-    public VentanaAlumno(String nombreUsuario) {
-        setTitle("Panel del Alumno - " + nombreUsuario);
+    public VentanaAlumno(int idUsuario) {
+        setTitle("Panel del Alumno - " + idUsuario);
         setMinimumSize(new Dimension(800, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -29,6 +27,8 @@ public class VentanaAlumno extends JFrame {
         };
         fondo.setLayout(new BorderLayout());
         setContentPane(fondo);
+
+
 
         // Barra superior
         JPanel barraSuperior = new JPanel(new BorderLayout());
@@ -83,36 +83,27 @@ public class VentanaAlumno extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(30, 30, 30, 30);
 
-        //Conuslta para el id de usuario
-        int idAlumno = -1;
-        try (Connection conn = ConexionDB.getConnection()) {
-            String sql = "SELECT ID_Alumno FROM Alumno WHERE Nombre = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nombreUsuario);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                idAlumno = rs.getInt("ID_Alumno");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al obtener el ID del usuario: " + e.getMessage());
-        }
 
         gbc.gridx = 0;
         JButton b1 = crearBoton("Test práctica", "prueba.png");
-        int finalIdAlumno = idAlumno;//Cosas del IDE
-        b1.addActionListener(e -> new TestPractica(finalIdAlumno));
+        int finalIdAlumno = idUsuario;//Cosas del IDE
+        b1.addActionListener(e -> new TestPractica(this, finalIdAlumno));
         panelCentral.add(b1, gbc);
 
         gbc.gridx = 1;
         JButton b2 = crearBoton("Test examen", "examen.png");
-        b2.addActionListener(e -> new TestExamen());
+        b2.addActionListener(e -> new TestExamen(this, finalIdAlumno));
         panelCentral.add(b2, gbc);
 
         gbc.gridx = 2;
-        JButton b3 = crearBoton("Pedir cita", "calendario.png");
-        b3.addActionListener(e -> new CitaPractica());
+        JButton b3 = crearBoton("Examen fallos", "examen.png");
+        b3.addActionListener(e -> new TestFallos(this, finalIdAlumno));
         panelCentral.add(b3, gbc);
+
+        gbc.gridx = 3;
+        JButton b4 = crearBoton("Pedir cita", "calendario.png");
+        b4.addActionListener(e -> new CitaPractica(this, finalIdAlumno));
+        panelCentral.add(b4, gbc);
 
         fondo.add(panelCentral, BorderLayout.CENTER);
 

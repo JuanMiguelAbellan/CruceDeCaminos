@@ -123,13 +123,6 @@ INSERT INTO PreguntasTest (ID_PreguntaTest, Pregunta, Correcta, Opcion1, Opcion2
 (29, '¿Qué significan las luces de emergencia encendidas?', 'Avisa de peligro', 'Autorización para circular rápido', 'Indica coche de autoescuela', 'Señala que puede girar'),
 (30, '¿Qué significa una señal de prohibido adelantar con un coche negro y otro rojo?', 'Prohibido adelantar a vehículos de motor', 'Obligación de adelantar', 'Prohibido detenerse', 'Prioridad en curvas');
 
--- === FALLOS DE ALUMNOS TEÓRICOS (10 cada uno) ===
-INSERT INTO Fallos (ID_Pregunta, ID_Alumno, Fecha) VALUES
-(2, 1, NOW()),
-(5, 1, NOW()),
-(8, 1, NOW());
-
-
 -- === RESULTADOS TEÓRICOS ===
 INSERT INTO ResultadosTeoricos (ID_Alumno, Total_Test, Total_Suspensos, Porcentaje)
 SELECT ID_Alumno, 20, 5, 75.0 FROM Alumno WHERE Tipo = 'teorico';

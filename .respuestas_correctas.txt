@@ -1,0 +1,30 @@
+20:Detenerse
+9:Peligro
+5:No
+10:ABS
+3:Puede continuar
+7:1,5 metros
+13:No, salvo con manos libres
+8:Permiso de circulación
+26:Carril reservado
+25:Prohibido el paso a vehículos de motor
+28:Sistema de retención infantil
+19:Prohibido adelantar
+15:Cuando el dibujo tiene menos de 1,6 mm
+23:Pérdida de control por agua
+16:Adelantar
+2:Detenerse completamente
+1:120 km/h
+11:Cuando haya poca visibilidad
+27:Reducir la velocidad o detenerse
+17:Retirar los vehículos si es posible
+18:El de la derecha pasa primero
+30:Prohibido adelantar a vehículos de motor
+24:Carril bici
+21:En averías o accidentes
+12:Obligación de seguir recto
+14:Girar en la dirección de la curva
+4:0,3 g/l en sangre
+6:Azul con borde rojo
+29:Avisa de peligro
+22:Precaución
