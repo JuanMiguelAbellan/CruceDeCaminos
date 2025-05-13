@@ -1,0 +1,13 @@
+A tener en cuenta para la entrega final, por parte de BBDD, el DISEÑO de la BD consta de la siguiente información:
+- Diagrama Entidad-Relación (E/R) y modelo físico (usando Draw.io u otra herramienta gráfica). DIAGRAMA E/R NO INCLUIDO. MODELO RELACIONAL ENTREGADO.
+- Identificación de tablas, campos y relaciones. ENTREGADO EN MODELO RELACIONAL.
+- Selección de tipos de datos adecuados para cada campo. ENTREGADO EN .SQL
+- Definición de claves primarias y foráneas. ENTREGADO EN MODELO RELACIONAL.
+- Validación de integridad y consistencia de los datos normalizados. NO INCLUIDO
+- Justificación de las decisiones de diseño tomadas (documento de texto). NO INCLUIDO
+
+Si que están en el repositorio (que no se requerían en la primera entrega):
+- SQL: estructura e insercionDatos
+- Codigo de la aplicación
+
+<b>¡¡¡Felicidades continua así!!!</b>
