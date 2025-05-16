@@ -114,7 +114,7 @@ public class Login extends JFrame {
                             abrirVentanaAlumno(idUsuario);
                             break;
                         case "profesor":
-                            abrirVentanaProfesor();
+                            abrirVentanaProfesor(idUsuario);
                             break;
                         case "administrador":
                             abrirVentanaAdministrador();
@@ -135,14 +135,13 @@ public class Login extends JFrame {
         JOptionPane.showMessageDialog(this, "Administrador");
     }
 
-    private void abrirVentanaProfesor() {
-        JOptionPane.showMessageDialog(this, "Profesor");
+    private void abrirVentanaProfesor(int idUsuario) {
+        new VentanaProfesor(idUsuario);
 
     }
 
     private void abrirVentanaAlumno(int idUsuario) {
-        VentanaAlumno ventana=new VentanaAlumno(idUsuario);
-
+        new VentanaAlumno(idUsuario);
     }
 
 }

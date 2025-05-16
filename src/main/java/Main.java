@@ -7,5 +7,5 @@ public class Main {
 //        TestExamen testExamen = new TestExamen(13);
     }
 }
-//TODO completar los botones desplegables de VentanaAlumno e IA
-//TODO VentanaPorfesor, VentanaAdmin, notificaciones
+//TODO IA
+//TODO VentanaAdmin, notificaciones

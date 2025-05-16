@@ -1,12 +1,18 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class VentanaAlumno extends JFrame {
+    private int finalIdAlumno=1;
 
     public VentanaAlumno(int idUsuario) {
-        setTitle("Panel del Alumno - " + idUsuario);
+        finalIdAlumno = idUsuario;
+        setTitle("Panel del Alumno - " + finalIdAlumno);
         setMinimumSize(new Dimension(800, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -42,13 +48,13 @@ public class VentanaAlumno extends JFrame {
 
         JPopupMenu menu = new JPopupMenu();
         int anchoIconosMenus = 30;
-        menu.add(new JMenuItem("Home", cargarIcono("hogar.png", anchoIconosMenus, anchoIconosMenus)));
-        menu.add(new JMenuItem("Realizar test práctica", cargarIcono("prueba.png", anchoIconosMenus, anchoIconosMenus)));
-        menu.add(new JMenuItem("Realizar test examen", cargarIcono("examen.png", anchoIconosMenus, anchoIconosMenus)));
-        menu.add(new JMenuItem("Consultar porcentaje", cargarIcono("porcentaje.png", anchoIconosMenus, anchoIconosMenus)));
+        menu.add(new JMenuItem("Realizar test práctica", cargarIcono("prueba.png", anchoIconosMenus, anchoIconosMenus))).addActionListener(e-> new TestPractica(this, finalIdAlumno));
+        menu.add(new JMenuItem("Realizar test examen", cargarIcono("examen.png", anchoIconosMenus, anchoIconosMenus))).addActionListener(e-> new TestExamen(this, finalIdAlumno));
+        menu.add(new JMenuItem("Realizar test de fallos", cargarIcono("examen.png", anchoIconosMenus, anchoIconosMenus))).addActionListener(e->new TestFallos(this, finalIdAlumno));
+        menu.add(new JMenuItem("Consultar porcentaje", cargarIcono("porcentaje.png", anchoIconosMenus, anchoIconosMenus))).addActionListener(e->mostrarPorcentaje());
         menu.addSeparator();
-        menu.add(new JMenuItem("Solicitar cita práctica", cargarIcono("calendario.png", anchoIconosMenus, anchoIconosMenus)));
-        menu.add(new JMenuItem("Consultar maniobras superadas", cargarIcono("formar.png", anchoIconosMenus, anchoIconosMenus)));
+        menu.add(new JMenuItem("Solicitar cita práctica", cargarIcono("calendario.png", anchoIconosMenus, anchoIconosMenus))).addActionListener(e->new CitaPractica(this, finalIdAlumno));
+        menu.add(new JMenuItem("Consultar maniobras superadas", cargarIcono("formar.png", anchoIconosMenus, anchoIconosMenus))).addActionListener(e-> mostrarManiobras());
 
 
         menuBtn.addActionListener(e -> menu.show(menuBtn, 0, menuBtn.getHeight()));
@@ -66,7 +72,7 @@ public class VentanaAlumno extends JFrame {
                 new Login();
             }
         });
-        menuUsuario.add(new JMenuItem("Consultar mensajes", cargarIcono("correo-electronico.png", anchoIconosMenus, anchoIconosMenus)));
+        //menuUsuario.add(new JMenuItem("Consultar mensajes", cargarIcono("correo-electronico.png", anchoIconosMenus, anchoIconosMenus)));
         menuUsuario.add(itemCerrarSesion);
 
         userButton.addActionListener(e -> menuUsuario.show(userButton, userButton.getWidth() - 100, userButton.getHeight()));
@@ -86,7 +92,7 @@ public class VentanaAlumno extends JFrame {
 
         gbc.gridx = 0;
         JButton b1 = crearBoton("Test práctica", "prueba.png");
-        int finalIdAlumno = idUsuario;//Cosas del IDE
+
         b1.addActionListener(e -> new TestPractica(this, finalIdAlumno));
         panelCentral.add(b1, gbc);
 
@@ -169,6 +175,44 @@ public class VentanaAlumno extends JFrame {
         } else {
             System.err.println("No se encontró el icono: " + nombre);
             return null;
+        }
+    }
+    private void mostrarPorcentaje(){
+        double porcentaje =0;
+        try (Connection conn = ConexionDB.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT Porcentaje FROM ResultadosTeoricos WHERE ID_Alumno = ?");
+            stmt.setInt(1, finalIdAlumno);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()){
+                porcentaje+=rs.getInt("Porcentaje");
+            }
+
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar el porcentaje: " + e.getMessage());
+        }
+        JOptionPane.showMessageDialog(this,"Tu porcentaje de aciertos es:"+porcentaje);
+    }
+    private void mostrarManiobras(){
+        ArrayList<String> maniobras= new ArrayList<>();
+        try (Connection conn = ConexionDB.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT Maniobra_Superada FROM ResultadosPracticos WHERE ID_Alumno = ?");
+            stmt.setInt(1, finalIdAlumno);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()){
+               maniobras.add(rs.getString("Porcentaje"));
+            }
+
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar el porcentaje: " + e.getMessage());
+        }
+        if(maniobras.isEmpty()){
+            JOptionPane.showMessageDialog(this,"No has realizado ninguna clase practica todavia");
+        }else{
+            JOptionPane.showMessageDialog(this,"Tus maniobras superadas son: "+maniobras);
         }
     }
 }
