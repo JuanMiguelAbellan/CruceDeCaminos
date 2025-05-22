@@ -110,7 +110,23 @@ public class Login extends JFrame {
                 int idUsuario = rs.getInt("ID_Usuario");
 
                 // Comparar el hash
-                if (BCrypt.checkpw(password, hashEnBD)) {
+//                if (BCrypt.checkpw(password, hashEnBD)) {
+//                    switch (rol) {
+//                        case "alumno":
+//                            abrirVentanaAlumno(idUsuario);
+//                            break;
+//                        case "profesor":
+//                            abrirVentanaProfesor(idUsuario);
+//                            break;
+//                        case "administrador":
+//                            abrirVentanaAdministrador();
+//                            break;
+//                    }
+//                    dispose();
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Contraseña incorrecta.");
+//                }
+
                     switch (rol) {
                         case "alumno":
                             abrirVentanaAlumno(idUsuario);
@@ -123,9 +139,7 @@ public class Login extends JFrame {
                             break;
                     }
                     dispose();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Contraseña incorrecta.");
-                }
+
             } else {
                 JOptionPane.showMessageDialog(this, "El usuario no existe.");
             }

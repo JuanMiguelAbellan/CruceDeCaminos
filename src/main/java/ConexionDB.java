@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class ConexionDB {
 
-    private static final String URl = "jdbc:mysql://db-aldeas.c7wsukq6guur.us-east-1.rds.amazonaws.com:3306/Cruce_De_Caminos";
+    private static final String URl = "jdbc:mysql://proyecto.cqdeymjatzl3.us-east-1.rds.amazonaws.com:3306/Cruce_De_Caminos";
     private static final String USER = "admin";
     private static final String PASSWORD = "Admin.12345678";
 
