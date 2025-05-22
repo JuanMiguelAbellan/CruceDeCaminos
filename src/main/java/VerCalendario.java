@@ -114,57 +114,61 @@ public class VerCalendario extends JFrame{
         int primerDiaSemana = cal.get(Calendar.DAY_OF_WEEK);
         int diasEnMes = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        // Cargar reservas
-        List<Date> reservas = cargarReservasDelProfesor(nombreProfesor);
+        for (int i = 1; i < primerDiaSemana; i++) {
+            gridDias.add(new JLabel(""));
+        }
+
         java.util.Map<Integer, java.util.List<String>> mapaHoras = new java.util.HashMap<>();
+        List<Date> reservas = cargarReservasDelProfesor(idPofesor);
+
+        Calendar c = Calendar.getInstance();
 
         for (Date d : reservas) {
-            Calendar c = Calendar.getInstance();
             c.setTime(d);
             int dia = c.get(Calendar.DAY_OF_MONTH);
             int mes = c.get(Calendar.MONTH);
             int año = c.get(Calendar.YEAR);
 
+            // Importante: compara con el mes y año del calendario actual
             if (mes == calendar.get(Calendar.MONTH) && año == calendar.get(Calendar.YEAR)) {
                 String hora = String.format("%02d:%02d", c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
                 mapaHoras.computeIfAbsent(dia, k -> new ArrayList<>()).add(hora);
             }
         }
 
-        // Espacios en blanco hasta el primer día
-        for (int i = 1; i < primerDiaSemana; i++) {
-            gridDias.add(new JLabel(""));
-        }
-
         for (int dia = 1; dia <= diasEnMes; dia++) {
-            JButton btnDia = new JButton(String.valueOf(dia));
-            btnDia.setMargin(new Insets(10, 10, 10, 10));
-            btnDia.setFont(new Font("Arial", Font.BOLD, 14));
-            btnDia.setHorizontalAlignment(SwingConstants.CENTER);
+            JPanel panelDia = new JPanel(new BorderLayout());
+            panelDia.setPreferredSize(new Dimension(100, 100));
+            panelDia.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            panelDia.setBackground(new Color(240, 248, 255));
 
+            JLabel labelDia = new JLabel(String.valueOf(dia));
+            labelDia.setHorizontalAlignment(SwingConstants.RIGHT);
+            labelDia.setFont(new Font("Arial", Font.BOLD, 12));
+            labelDia.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+            panelDia.add(labelDia, BorderLayout.NORTH);
 
-            btnDia.setBackground(new Color(173, 216, 230)); // azul claro si hay reservas
-            btnDia.setOpaque(true);
-            btnDia.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            JPanel panelCitas = new JPanel();
+            panelCitas.setLayout(new BoxLayout(panelCitas, BoxLayout.Y_AXIS));
+            panelCitas.setOpaque(false);
 
-            int diaFinal = dia; // necesario para la lambda
-            btnDia.addActionListener(e -> {
-                ArrayList<String> horasDisponibles = new ArrayList<>();
-                for (int h = 9; h < 15; h++) {
-                    horasDisponibles.add(String.format("%02d:00", h));
+            List<String> citas = mapaHoras.getOrDefault(dia, new ArrayList<>());
+            if (citas.isEmpty()) {
+                JLabel sinCitas = new JLabel("Sin citas");
+                sinCitas.setFont(new Font("Arial", Font.ITALIC, 11));
+                panelCitas.add(sinCitas);
+            } else {
+                for (String hora : citas) {
+                    JLabel l = new JLabel("• " + hora);
+                    l.setFont(new Font("Arial", Font.PLAIN, 11));
+                    panelCitas.add(l);
                 }
-                for (int h = 17; h < 22; h++) {
-                    horasDisponibles.add(String.format("%02d:00", h));
-                }
+            }
 
-                List<String> horasNoDisponibles = mapaHoras.getOrDefault(diaFinal, new ArrayList<>());
-                horasDisponibles.removeAll(horasNoDisponibles);
-
-            });
-
-
-            gridDias.add(btnDia);
+            panelDia.add(panelCitas, BorderLayout.CENTER);
+            gridDias.add(panelDia);
         }
+
 
         panelCalendario.add(gridDias, BorderLayout.CENTER);
         add(panelCalendario, BorderLayout.CENTER);
@@ -180,12 +184,12 @@ public class VerCalendario extends JFrame{
     }
 
 
-    public List<Date> cargarReservasDelProfesor(String nombreProfesor){
+    public List<Date> cargarReservasDelProfesor(int idPofesor){
         List<Date> listaFechasReservadas=new ArrayList<>();
 
         try (Connection conn = ConexionDB.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT Fecha_Hora FROM Reservas WHERE ID_Profesor=(SELECT ID_Profesor FROM Profesor WHERE Nombre = ?)");
-            stmt.setString(1, nombreProfesor);
+            PreparedStatement stmt = conn.prepareStatement("SELECT Fecha_Hora FROM Reservas WHERE ID_Profesor=?");
+            stmt.setInt(1, idPofesor);
 
             ResultSet rs = stmt.executeQuery();
 
@@ -197,7 +201,7 @@ public class VerCalendario extends JFrame{
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar profesores: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al cargar reservas: " + e.getMessage());
         }
         return listaFechasReservadas;
     }

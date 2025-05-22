@@ -18,7 +18,6 @@ import java.util.List;
 
 
 public class CitaPractica extends JFrame{
-    private final JFrame ventanaAnterior;
 
     private final JLabel lblProfesor= new JLabel("Selecciona el profesor: ", SwingConstants.CENTER);
     private final JComboBox listaProfesores= new JComboBox();
@@ -30,9 +29,8 @@ public class CitaPractica extends JFrame{
     private Calendar calendar = Calendar.getInstance();
 
     public CitaPractica(JFrame ventanaAnterior, int idAlumno){
-        this.ventanaAnterior = ventanaAnterior;
         this.idAlumno = idAlumno;
-        setTitle("Test Práctica");
+        setTitle("Cita Práctica");
         setMinimumSize(new Dimension(800, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -44,6 +42,7 @@ public class CitaPractica extends JFrame{
                 }
             }
         });
+
 
         setLayout(new BorderLayout());
 
@@ -78,7 +77,7 @@ public class CitaPractica extends JFrame{
 
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar profesores: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al cargar todos los profesores: " + e.getMessage());
         }
     }
 

@@ -25,8 +25,7 @@ public class ManiobraAlumno extends JFrame{
         this.ventanaAnterior = ventanaAnterior;
         this.idProfesor = idProfesor;
         setTitle("Añadir maniobra");
-        setMinimumSize(new Dimension(800, 600));
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setSize(350, 350);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -36,6 +35,21 @@ public class ManiobraAlumno extends JFrame{
                 }
             }
         });
+
+        JPanel panelConFondo = new JPanel() {
+            Image fondo = new ImageIcon(getClass().getClassLoader().getResource("fondo.jpg")).getImage();
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (fondo != null) {
+                    g.drawImage(fondo, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+
+        panelConFondo.setLayout(new GridBagLayout());
+        setContentPane(panelConFondo);
 
         setLayout(new BorderLayout());
 

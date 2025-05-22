@@ -1,11 +1,8 @@
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        Login login=new Login();
-//        VentanaAlumno ventana = new VentanaAlumno("Julian");
-//        TestPractica test = new TestPractica(13);
-//        TestExamen testExamen = new TestExamen(13);
+        new Login();
     }
 }
-//TODO IA
-//TODO VentanaAdmin, notificaciones
+//TODO fixear Remove User y AddUser poner IDAlumno igual que IDUsuario

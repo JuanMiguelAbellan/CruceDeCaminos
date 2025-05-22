@@ -6,9 +6,9 @@ INSERT INTO Usuarios (Username, Password_Hash, Rol) VALUES
 ('admin1', 'hash_admin1', 'administrador'),
 ('admin2', 'hash_admin2', 'administrador');
 
-INSERT INTO Administradores (ID_Administrador, DNI, Nombre, Apellido) VALUES
-(1, '00000001A', 'Admin1', 'Apellido1'),
-(2, '00000002A', 'Admin2', 'Apellido2');
+INSERT INTO Administrador (DNI, Nombre, Apellido) VALUES
+('00000001A', 'Admin1', 'Apellido1'),
+('00000002A', 'Admin2', 'Apellido2');
 
 -- === PROFESORES ===
 -- Teóricos: ID 3-7
@@ -25,17 +25,17 @@ INSERT INTO Usuarios (Username, Password_Hash, Rol) VALUES
 ('profprac4', 'hash_profprac4', 'profesor'),
 ('profprac5', 'hash_profprac5', 'profesor');
 
-INSERT INTO Profesor (ID_Profesor, DNI, Nombre, Apellido, Tipo) VALUES
-(3, '10000001B', 'Teorico1', 'Apellido', 'teorico'),
-(4, '10000002B', 'Teorico2', 'Apellido', 'teorico'),
-(5, '10000003B', 'Teorico3', 'Apellido', 'teorico'),
-(6, '10000004B', 'Teorico4', 'Apellido', 'teorico'),
-(7, '10000005B', 'Teorico5', 'Apellido', 'teorico'),
-(8, '20000001B', 'Practico1', 'Apellido', 'practico'),
-(9, '20000002B', 'Practico2', 'Apellido', 'practico'),
-(10, '20000003B', 'Practico3', 'Apellido', 'practico'),
-(11, '20000004B', 'Practico4', 'Apellido', 'practico'),
-(12, '20000005B', 'Practico5', 'Apellido', 'practico');
+INSERT INTO Profesor ( DNI, Nombre, Apellido, Tipo) VALUES
+('10000001B', 'Teorico1', 'Apellido', 'teorico'),
+('10000002B', 'Teorico2', 'Apellido', 'teorico'),
+('10000003B', 'Teorico3', 'Apellido', 'teorico'),
+('10000004B', 'Teorico4', 'Apellido', 'teorico'),
+('10000005B', 'Teorico5', 'Apellido', 'teorico'),
+('20000001B', 'Practico1', 'Apellido', 'practico'),
+('20000002B', 'Practico2', 'Apellido', 'practico'),
+('20000003B', 'Practico3', 'Apellido', 'practico'),
+('20000004B', 'Practico4', 'Apellido', 'practico'),
+('20000005B', 'Practico5', 'Apellido', 'practico');
 
 -- === ALUMNOS ===
 -- Teóricos: ID 13-22
@@ -65,30 +65,30 @@ INSERT INTO Usuarios (Username, Password_Hash, Rol) VALUES
 ('alumprac9', 'hash_prac9', 'alumno'),
 ('alumprac10', 'hash_prac10', 'alumno');
 
-INSERT INTO Alumno (ID_Alumno, DNI, Nombre, Apellido, Tipo) VALUES
+INSERT INTO Alumno ( DNI, Nombre, Apellido, Tipo) VALUES
 -- Teóricos
-(13, '30000001C', 'Teorico1', 'Apellido', 'teorico'),
-(14, '30000002C', 'Teorico2', 'Apellido', 'teorico'),
-(15, '30000003C', 'Teorico3', 'Apellido', 'teorico'),
-(16, '30000004C', 'Teorico4', 'Apellido', 'teorico'),
-(17, '30000005C', 'Teorico5', 'Apellido', 'teorico'),
-(18, '30000006C', 'Teorico6', 'Apellido', 'teorico'),
-(19, '30000007C', 'Teorico7', 'Apellido', 'teorico'),
-(20, '30000008C', 'Teorico8', 'Apellido', 'teorico'),
-(21, '30000009C', 'Teorico9', 'Apellido', 'teorico'),
-(22, '30000010C', 'Teorico10', 'Apellido', 'teorico'),
+('30000001C', 'Teorico1', 'Apellido', 'teorico'),
+('30000002C', 'Teorico2', 'Apellido', 'teorico'),
+('30000003C', 'Teorico3', 'Apellido', 'teorico'),
+('30000004C', 'Teorico4', 'Apellido', 'teorico'),
+('30000005C', 'Teorico5', 'Apellido', 'teorico'),
+('30000006C', 'Teorico6', 'Apellido', 'teorico'),
+('30000007C', 'Teorico7', 'Apellido', 'teorico'),
+('30000008C', 'Teorico8', 'Apellido', 'teorico'),
+('30000009C', 'Teorico9', 'Apellido', 'teorico'),
+('30000010C', 'Teorico10', 'Apellido', 'teorico'),
 
 -- Prácticos
-(23, '40000001C', 'Practico1', 'Apellido', 'practico'),
-(24, '40000002C', 'Practico2', 'Apellido', 'practico'),
-(25, '40000003C', 'Practico3', 'Apellido', 'practico'),
-(26, '40000004C', 'Practico4', 'Apellido', 'practico'),
-(27, '40000005C', 'Practico5', 'Apellido', 'practico'),
-(28, '40000006C', 'Practico6', 'Apellido', 'practico'),
-(29, '40000007C', 'Practico7', 'Apellido', 'practico'),
-(30, '40000008C', 'Practico8', 'Apellido', 'practico'),
-(31, '40000009C', 'Practico9', 'Apellido', 'practico'),
-(32, '40000010C', 'Practico10', 'Apellido', 'practico');
+( '40000001C', 'Practico1', 'Apellido', 'practico'),
+( '40000002C', 'Practico2', 'Apellido', 'practico'),
+( '40000003C', 'Practico3', 'Apellido', 'practico'),
+( '40000004C', 'Practico4', 'Apellido', 'practico'),
+( '40000005C', 'Practico5', 'Apellido', 'practico'),
+( '40000006C', 'Practico6', 'Apellido', 'practico'),
+( '40000007C', 'Practico7', 'Apellido', 'practico'),
+( '40000008C', 'Practico8', 'Apellido', 'practico'),
+( '40000009C', 'Practico9', 'Apellido', 'practico'),
+( '40000010C', 'Practico10', 'Apellido', 'practico');
 
 -- === PREGUNTAS TEST ===
 INSERT INTO PreguntasTest (ID_PreguntaTest, Pregunta, Correcta, Opcion1, Opcion2, Opcion3) VALUES

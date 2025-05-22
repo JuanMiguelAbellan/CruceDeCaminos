@@ -18,7 +18,7 @@ CREATE TABLE Telefonos (
 );
 
 CREATE TABLE Alumno (
-    ID_Alumno INT PRIMARY KEY,
+    ID_Alumno INT PRIMARY KEY AUTO_INCREMENT,
     DNI VARCHAR(10) NOT NULL,
     Nombre VARCHAR(50),
     Apellido VARCHAR(50),
@@ -27,7 +27,7 @@ CREATE TABLE Alumno (
 );
 
 CREATE TABLE Profesor (
-    ID_Profesor INT PRIMARY KEY,
+    ID_Profesor INT PRIMARY KEY AUTO_INCREMENT,
     DNI VARCHAR(10) NOT NULL,
     Nombre VARCHAR(50),
     Apellido VARCHAR(50),
@@ -35,8 +35,8 @@ CREATE TABLE Profesor (
     FOREIGN KEY (ID_Profesor) REFERENCES Usuarios(ID_Usuario)
 );
 
-CREATE TABLE Administradores (
-    ID_Administrador INT PRIMARY KEY,
+CREATE TABLE Administrador (
+    ID_Administrador INT PRIMARY KEY AUTO_INCREMENT,
     DNI VARCHAR(10) NOT NULL,
     Nombre VARCHAR(50),
     Apellido VARCHAR(50),

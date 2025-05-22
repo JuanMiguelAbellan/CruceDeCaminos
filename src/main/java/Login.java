@@ -1,3 +1,5 @@
+import org.mindrot.jbcrypt.BCrypt;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -96,19 +98,19 @@ public class Login extends JFrame {
 
     }
     public void comprobarUsuario(String usuario, String password) {
-
         try (Connection conn = ConexionDB.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Usuarios WHERE Username = ? AND Password_Hash = ?");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Usuarios WHERE Username = ?");
             stmt.setString(1, usuario);
-            stmt.setString(2, password);
 
             ResultSet rs = stmt.executeQuery();
 
-                if (rs.next()) {
-                    String rol = rs.getString("Rol");
-                    int idUsuario = rs.getInt("ID_Usuario");
+            if (rs.next()) {
+                String hashEnBD = rs.getString("Password_Hash");
+                String rol = rs.getString("Rol");
+                int idUsuario = rs.getInt("ID_Usuario");
 
-                    // Redirigir según rol
+                // Comparar el hash
+                if (BCrypt.checkpw(password, hashEnBD)) {
                     switch (rol) {
                         case "alumno":
                             abrirVentanaAlumno(idUsuario);
@@ -120,19 +122,20 @@ public class Login extends JFrame {
                             abrirVentanaAdministrador();
                             break;
                     }
-
                     dispose();
-
                 } else {
-                    JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
+                    JOptionPane.showMessageDialog(this, "Contraseña incorrecta.");
                 }
-            } catch (SQLException e) {
-            throw new RuntimeException(e);
+            } else {
+                JOptionPane.showMessageDialog(this, "El usuario no existe.");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al comprobar el usuario: " + e.getMessage());
         }
     }
 
     private void abrirVentanaAdministrador() {
-        JOptionPane.showMessageDialog(this, "Administrador");
+        new VentanaAdmin();
     }
 
     private void abrirVentanaProfesor(int idUsuario) {
