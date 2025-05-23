@@ -140,7 +140,6 @@ public class RemoveUser extends JFrame {
         }
 
         try (Connection conn = ConexionDB.getConnection()) {
-            // Obtener el nombre de usuario para borrarlo de la tabla Usuarios
             String obtenerUsuario = "SELECT Username FROM Usuarios WHERE Rol = ? AND DNI = ?";
             String username = null;
 
@@ -155,12 +154,10 @@ public class RemoveUser extends JFrame {
             }
 
             if (username != null) {
-                // Eliminar de tabla específica
                 PreparedStatement stmt1 = conn.prepareStatement("DELETE FROM " + tabla + " WHERE DNI = ?");
                 stmt1.setString(1, dni);
                 stmt1.executeUpdate();
 
-                // Eliminar de tabla Usuarios
                 PreparedStatement stmt2 = conn.prepareStatement("DELETE FROM Usuarios WHERE Username = ?");
                 stmt2.setString(1, username);
                 stmt2.executeUpdate();
